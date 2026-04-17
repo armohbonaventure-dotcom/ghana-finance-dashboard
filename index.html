@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GhanaFX — Ghana Finance Dashboard</title>
+<title>GhanaFX - Ghana Finance Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -119,17 +119,17 @@ select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);p
   <div class="main">
     <div class="chhead">
       <div>
-        <div class="chsym" id="chsym">—</div>
+        <div class="chsym" id="chsym">-</div>
         <div class="chmeta">
-          <div class="cmitem">Open: <span id="chopen">—</span></div>
-          <div class="cmitem">High: <span id="chhigh">—</span></div>
-          <div class="cmitem">Low: <span id="chlow">—</span></div>
-          <div class="cmitem">Vol: <span id="chvol">—</span></div>
+          <div class="cmitem">Open: <span id="chopen">-</span></div>
+          <div class="cmitem">High: <span id="chhigh">-</span></div>
+          <div class="cmitem">Low: <span id="chlow">-</span></div>
+          <div class="cmitem">Vol: <span id="chvol">-</span></div>
         </div>
       </div>
       <div style="margin-left:14px">
-        <div class="chprice" id="chprice">—</div>
-        <div id="chchange" style="font-size:12px">—</div>
+        <div class="chprice" id="chprice">-</div>
+        <div id="chchange" style="font-size:12px">-</div>
       </div>
       <div class="chtools">
         <button class="tbtn active" onclick="setRange('1D',this)">1D</button>
@@ -158,20 +158,20 @@ select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);p
       <div id="ratedetails"><div style="color:var(--text2);font-size:11px">Select a currency</div></div>
       <br/>
       <div class="rptitle">BoG Reference</div>
-      <div class="rprow"><span class="rplabel">Interbank</span><span class="rpval up" id="boginter">—</span></div>
-      <div class="rprow"><span class="rplabel">Buy</span><span class="rpval" id="bogbuy">—</span></div>
-      <div class="rprow"><span class="rplabel">Sell</span><span class="rpval" id="bogsell">—</span></div>
-      <div class="rprow"><span class="rplabel">Updated</span><span class="rpval" id="bogupdated">—</span></div>
+      <div class="rprow"><span class="rplabel">Interbank</span><span class="rpval up" id="boginter">-</span></div>
+      <div class="rprow"><span class="rplabel">Buy</span><span class="rpval" id="bogbuy">-</span></div>
+      <div class="rprow"><span class="rplabel">Sell</span><span class="rpval" id="bogsell">-</span></div>
+      <div class="rprow"><span class="rplabel">Updated</span><span class="rpval" id="bogupdated">-</span></div>
     </div>
     <div class="pbody" id="rtab-bdc">
       <div class="rptitle">BDC Spread Calculator</div>
       <label class="calclabel">Currency</label>
       <select id="calccurr" onchange="runCalc()">
-        <option value="XOF">XOF — CFA Franc (West Africa)</option>
-        <option value="USD">USD — US Dollar</option>
-        <option value="GBP">GBP — British Pound</option>
-        <option value="EUR">EUR — Euro</option>
-        <option value="CAD">CAD — Canadian Dollar</option>
+        <option value="XOF">XOF - CFA Franc (West Africa)</option>
+        <option value="USD">USD - US Dollar</option>
+        <option value="GBP">GBP - British Pound</option>
+        <option value="EUR">EUR - Euro</option>
+        <option value="CAD">CAD - Canadian Dollar</option>
       </select>
       <label class="calclabel">Amount (foreign currency)</label>
       <input class="calcinput" type="number" id="calcamt" value="1000" oninput="runCalc()"/>
@@ -279,22 +279,34 @@ setInterval(clockTick, 1000);
 clockTick();
 
 function loadRates() {
-  fetch('https://open.er-api.com/v6/latest/GHS')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d && d.rates){
-        Object.keys(d.rates).forEach(function(code){
-          if(code !== 'GHS') rates[code] = parseFloat((1/d.rates[code]).toFixed(6));
-        });
-      } else {
-        Object.assign(rates, FALLBACK);
-      }
-      onRatesLoaded();
-    })
-    .catch(function(){
-      Object.assign(rates, FALLBACK);
-      onRatesLoaded();
-    });
+  Object.assign(rates, FALLBACK);
+  onRatesLoaded();
+  var APIs = [
+    'https://open.er-api.com/v6/latest/GHS',
+    'https://api.exchangerate-api.com/v4/latest/GHS',
+    'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/ghs.json'
+  ];
+  function tryAPI(index) {
+    if(index >= APIs.length) return;
+    fetch(APIs[index])
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var updated = false;
+        if(d && d.rates){
+          Object.keys(d.rates).forEach(function(code){
+            if(code !== 'GHS'){ rates[code] = parseFloat((1/d.rates[code]).toFixed(6)); updated=true; }
+          });
+        } else if(d && d.ghs){
+          Object.keys(d.ghs).forEach(function(code){
+            if(code !== 'ghs'){ rates[code.toUpperCase()] = parseFloat((d.ghs[code]).toFixed(6)); updated=true; }
+          });
+        }
+        if(updated){ onRatesLoaded(); }
+        else { tryAPI(index+1); }
+      })
+      .catch(function(){ tryAPI(index+1); });
+  }
+  tryAPI(0);
 }
 
 function onRatesLoaded() {
@@ -323,7 +335,7 @@ function buildTicker() {
 
 function fmtPrice(price, code) {
   var p = parseFloat(price);
-  if(isNaN(p)) return '—';
+  if(isNaN(p)) return '-';
   if(code === 'JPY' || code === 'NGN' || code === 'XOF' || code === 'XAF' || code === 'TZS' || code === 'UGX') return p.toFixed(4);
   if(code === 'KWD') return p.toFixed(4);
   return p.toFixed(4);
@@ -506,7 +518,7 @@ function runCalc() {
     '<div class="calcrow"><span class="calckey">Margin</span><span class="calcval">'+margin+'%</span></div>'+
     '<div class="calcrow"><span class="calckey">Capital needed</span><span class="calcval">GHS '+capital+'</span></div>'+
     (live?'<div class="calcrow"><span class="calckey">Live rate</span><span class="calcval">'+fmtPrice(live,curr)+'</span></div>'+
-    '<div style="font-size:10px;margin-top:6px;color:'+(safe?'#26a69a':'#ef5350')+'">'+(safe?'Buy rate is within market range':'Buy rate is above live rate — review')+'</div>':'');
+    '<div style="font-size:10px;margin-top:6px;color:'+(safe?'#26a69a':'#ef5350')+'">'+(safe?'Buy rate is within market range':'Buy rate is above live rate - review')+'</div>':'');
 }
 
 function setView(view, btn) {

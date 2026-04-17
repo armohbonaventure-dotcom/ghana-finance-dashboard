@@ -446,8 +446,8 @@ function setRange(r, btn) {
 }
 
 function drawChart(price, chg, code) {
-  var ptMap={1D:24,1W:28,1M:30,'3M':30,'1Y':52};
-  var volMap={1D:0.003,1W:0.006,1M:0.009,'3M':0.014,'1Y':0.02};
+  var ptMap={'1D':24,'1W':28,'1M':30,'3M':30,'1Y':52};
+  var volMap={'1D':0.003,'1W':0.006,'1M':0.009,'3M':0.014,'1Y':0.02};
   var pts = ptMap[currentRange]||24;
   var vol = volMap[currentRange]||0.003;
   var data   = genData(price, pts, vol);

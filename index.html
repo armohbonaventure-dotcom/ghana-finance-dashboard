@@ -3,544 +3,688 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GhanaFX - Ghana Finance Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<title>GhanaFX</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#131722;--bg2:#1e222d;--bg3:#2a2e39;
+  --bg:#131722;--bg2:#1e222d;--bg3:#2a2e39;--bg4:#363a45;
   --border:#2a2e39;--border2:#363a45;
-  --text:#d1d4dc;--text2:#787b86;
+  --text:#d1d4dc;--text2:#787b86;--text3:#4c525e;
   --green:#26a69a;--red:#ef5350;--accent:#2962ff;
+  --green2:#089981;--red2:#f23645;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuchet MS',sans-serif;font-size:13px}
-nav{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:20px}
-.logo{font-size:16px;font-weight:700;color:#fff}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuchet MS',Arial,sans-serif;font-size:12px;overflow:hidden}
+
+/* TOP NAV */
+.topbar{height:38px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:6px;flex-shrink:0}
+.logo{font-size:15px;font-weight:700;color:#fff;margin-right:8px;white-space:nowrap}
 .logo span{color:var(--green)}
-.nav-tabs{display:flex;gap:4px}
-.ntab{padding:6px 14px;border-radius:4px;cursor:pointer;color:var(--text2);font-size:12px;border:none;background:none}
-.ntab:hover{background:var(--bg3);color:var(--text)}
-.ntab.active{background:var(--accent);color:#fff}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
+.sym-box{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:4px 10px;cursor:pointer;min-width:120px}
+.sym-box:hover{background:var(--bg4)}
+.sym-name{font-weight:700;color:#fff;font-size:13px}
+.tb-sep{width:1px;height:20px;background:var(--border2);margin:0 2px}
+.tb-btn{background:none;border:none;color:var(--text2);padding:4px 8px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tb-btn:hover{background:var(--bg3);color:var(--text)}
+.tb-btn.active{background:var(--bg3);color:var(--text)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tb-trade{background:var(--accent);color:#fff;border:none;padding:5px 14px;border-radius:3px;font-weight:700;cursor:pointer;font-size:12px}
+.tb-publish{background:none;border:1px solid var(--border2);color:var(--text);padding:5px 12px;border-radius:3px;cursor:pointer;font-size:12px}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.clk{font-size:11px;color:var(--text2)}
-.ticker{height:30px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;white-space:nowrap}
-.tscroll{display:flex;animation:tscroll 35s linear infinite}
-@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.titem{padding:0 18px;display:inline-flex;gap:8px;border-right:1px solid var(--border);font-size:11px}
+
+/* TICKER */
+.ticker{height:28px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;flex-shrink:0}
+.tscroll{display:flex;animation:tsc 40s linear infinite;white-space:nowrap}
+@keyframes tsc{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.titem{padding:0 16px;display:inline-flex;gap:7px;border-right:1px solid var(--border);font-size:11px}
 .tsym{color:#fff;font-weight:700}
 .up{color:var(--green)}.dn{color:var(--red)}
-.layout{display:flex;height:calc(100vh - 78px)}
-.sidebar{width:270px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.sbhead{padding:10px}
-.sbsearch{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:4px;font-size:12px;outline:none}
-.sbsearch:focus{border-color:var(--accent)}
-.sblabel{font-size:10px;font-weight:700;color:var(--text2);padding:8px 12px 4px;letter-spacing:.8px;text-transform:uppercase}
-.sblist{overflow-y:auto;flex:1}
-.sbitem{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border)}
-.sbitem:hover,.sbitem.sel{background:var(--bg3)}
-.sbitem.sel{border-left:2px solid var(--accent)}
-.sbsym{font-weight:700;color:#fff;font-size:12px}
-.sbname{font-size:10px;color:var(--text2);margin-top:1px}
-.sbprice{text-align:right}
-.sbpval{font-size:12px;font-weight:700;color:var(--text)}
-.sbpchg{font-size:10px}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.chhead{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.chsym{font-size:20px;font-weight:700;color:#fff}
-.chprice{font-size:22px;font-weight:700}
-.chmeta{display:flex;gap:14px;flex-wrap:wrap}
-.cmitem{font-size:11px;color:var(--text2)}
-.cmitem span{color:var(--text)}
-.chtools{margin-left:auto;display:flex;gap:5px}
-.tbtn{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:11px}
-.tbtn:hover,.tbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.chartwrap{flex:1;padding:12px;position:relative;min-height:260px}
-.canvaswrap{position:relative;width:100%;height:100%;min-height:240px}
-.bbar{height:96px;border-top:1px solid var(--border);display:flex;overflow-x:auto}
-.bmet{min-width:115px;padding:10px 12px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center}
-.bmlabel{font-size:10px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
-.bmval{font-size:15px;font-weight:700;color:#fff}
-.bmsub{font-size:10px;color:var(--text2);margin-top:2px}
-.rpanel{width:255px;background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto}
-.ptabs{display:flex;border-bottom:1px solid var(--border)}
-.ptab{flex:1;padding:9px;text-align:center;cursor:pointer;font-size:11px;color:var(--text2);border-bottom:2px solid transparent}
-.ptab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.pbody{display:none;padding:12px}
-.pbody.active{display:block}
-.rptitle{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.rprow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px}
-.rprow:last-child{border-bottom:none}
-.rplabel{color:var(--text2)}
-.rpval{color:var(--text);font-weight:600}
-.calclabel{font-size:10px;color:var(--text2);margin-top:8px;display:block}
-.calcinput{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 8px;border-radius:3px;font-size:12px;outline:none;margin-top:3px}
-.calcinput:focus{border-color:var(--accent)}
-.calcres{background:var(--bg3);border-radius:4px;padding:8px;margin-top:8px}
-.calcrow{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
-.calckey{color:var(--text2)}
-.calcval{font-weight:600}
-select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 8px;border-radius:3px;font-size:12px;outline:none;width:100%}
-.loading{text-align:center;padding:40px 0;color:var(--text2);font-size:12px}
-.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes sp{to{transform:rotate(360deg)}}
+
+/* MAIN LAYOUT */
+.workspace{display:flex;height:calc(100vh - 66px)}
+
+/* LEFT TOOLBAR */
+.ltbar{width:46px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:2px;flex-shrink:0;overflow-y:auto}
+.lt-btn{width:34px;height:34px;border-radius:4px;border:none;background:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.lt-btn:hover{background:var(--bg3);color:var(--text)}
+.lt-btn.active{background:var(--bg3);color:var(--accent)}
+.lt-sep{width:28px;height:1px;background:var(--border2);margin:3px 0}
+
+/* CENTER CHART AREA */
+.chart-area{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* CHART HEADER */
+.chart-header{height:38px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:10px;flex-shrink:0}
+.ch-sym{font-size:14px;font-weight:700;color:#fff}
+.ch-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.ch-ohlc{display:flex;gap:10px;font-size:11px;color:var(--text2)}
+.ch-ohlc span{color:var(--text)}
+.ch-chg{font-size:12px;font-weight:700}
+.ch-tf-btns{display:flex;gap:2px;margin-left:auto}
+.tf-btn{background:none;border:none;color:var(--text2);padding:3px 7px;border-radius:3px;cursor:pointer;font-size:11px}
+.tf-btn:hover{background:var(--bg3);color:var(--text)}
+.tf-btn.active{background:var(--accent);color:#fff}
+
+/* CHART CANVAS */
+.chart-body{flex:1;position:relative;overflow:hidden}
+canvas#mainChart{position:absolute;top:0;left:0;width:100%;height:100%}
+.buy-sell-btns{position:absolute;top:10px;left:10px;display:flex;gap:6px}
+.sell-btn{background:#c62828;color:#fff;border:none;padding:6px 14px;border-radius:3px;cursor:pointer;font-size:11px;font-weight:700}
+.buy-btn{background:var(--accent);color:#fff;border:none;padding:6px 14px;border-radius:3px;cursor:pointer;font-size:11px;font-weight:700}
+.price-tag{position:absolute;right:0;background:var(--green2);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px 0 0 2px;white-space:nowrap}
+
+/* VOLUME + BOTTOM TIME BAR */
+.vol-area{height:60px;border-top:1px solid var(--border);position:relative;flex-shrink:0}
+canvas#volChart{position:absolute;top:0;left:0;width:100%;height:100%}
+.time-bar{height:28px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 8px;gap:2px;flex-shrink:0}
+.time-btns{display:flex;gap:2px}
+.range-btn{background:none;border:none;color:var(--text2);padding:3px 7px;border-radius:3px;cursor:pointer;font-size:11px}
+.range-btn:hover{background:var(--bg3);color:var(--text)}
+.range-btn.active{background:var(--bg3);color:var(--text);font-weight:700}
+.utc{margin-left:auto;font-size:10px;color:var(--text2)}
+
+/* RIGHT PANEL - WATCHLIST */
+.rpanel{width:260px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.rp-topbar{height:38px;display:flex;align-items:center;padding:0 10px;gap:6px;border-bottom:1px solid var(--border);flex-shrink:0}
+.rp-title{font-size:13px;font-weight:700;color:#fff;flex:1}
+.rp-icon{width:26px;height:26px;border-radius:3px;border:none;background:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.rp-icon:hover{background:var(--bg3);color:var(--text)}
+.wl-cols{display:flex;padding:4px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.wl-col{font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.wl-col-sym{flex:1}
+.wl-col-last{width:80px;text-align:right}
+.wl-col-chg{width:55px;text-align:right}
+.wl-col-pct{width:55px;text-align:right}
+.wl-section{padding:4px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.wl-sec-label{display:flex;align-items:center;gap:4px;padding:4px 10px;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+.wl-list{overflow-y:auto;flex:1}
+.wl-item{display:flex;align-items:center;padding:6px 10px;cursor:pointer;border-bottom:1px solid var(--border)}
+.wl-item:hover,.wl-item.sel{background:var(--bg3)}
+.wl-item.sel{border-left:2px solid var(--accent)}
+.wl-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;margin-right:6px}
+.wl-sym-wrap{flex:1;min-width:0}
+.wl-sym{font-weight:700;color:#fff;font-size:12px}
+.wl-name{font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wl-last{width:80px;text-align:right;font-weight:700;font-size:12px;color:#fff}
+.wl-chg{width:55px;text-align:right;font-size:11px}
+.wl-pct{width:55px;text-align:right;font-size:11px;font-weight:700}
+
+/* DETAIL PANEL below watchlist */
+.detail-panel{border-top:1px solid var(--border);padding:12px;flex-shrink:0}
+.dp-sym{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.dp-type{font-size:10px;color:var(--text2);margin-bottom:8px}
+.dp-price{font-size:22px;font-weight:700;color:var(--green);margin-bottom:2px}
+.dp-chg{font-size:12px;font-weight:700;margin-bottom:6px}
+.dp-status{font-size:11px;color:var(--green);margin-bottom:10px}
+.dp-news{background:var(--bg3);border-radius:4px;padding:8px;font-size:11px;color:var(--text2);line-height:1.5;cursor:pointer}
+.dp-news:hover{background:var(--bg4)}
+.dp-news-time{font-size:10px;color:var(--text3);margin-top:4px}
+
+/* BDC CALC */
+.bdc-panel{padding:10px;border-top:1px solid var(--border);flex-shrink:0}
+.bdc-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.bdc-row{display:flex;gap:6px;margin-bottom:6px}
+.bdc-input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:5px 7px;border-radius:3px;font-size:11px;outline:none}
+.bdc-input:focus{border-color:var(--accent)}
+.bdc-select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:5px 7px;border-radius:3px;font-size:11px;outline:none;margin-bottom:6px}
+.bdc-result{background:var(--bg3);border-radius:3px;padding:7px;font-size:11px}
+.bdc-res-row{display:flex;justify-content:space-between;padding:2px 0}
+.bdc-res-key{color:var(--text2)}
+.bdc-res-val{font-weight:700}
+
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
-@media(max-width:900px){.rpanel{display:none}}
-@media(max-width:600px){.sidebar{display:none}}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+@media(max-width:1000px){.rpanel{display:none}}
+@media(max-width:700px){.ltbar{display:none}}
 </style>
 </head>
 <body>
 
-<nav>
+<!-- TOP BAR -->
+<div class="topbar">
   <div class="logo">Ghana<span>FX</span></div>
-  <div class="nav-tabs">
-    <button class="ntab active" onclick="setView('forex',this)">Forex</button>
-    <button class="ntab" onclick="setView('gse',this)">GSE Stocks</button>
-    <button class="ntab" onclick="setView('bdc',this)">BDC Calc</button>
+  <div class="sym-box" onclick="showSearch()">
+    <span class="sym-name" id="top-sym">XOF/GHS</span>
+    <span style="color:var(--text2);font-size:10px">&#9660;</span>
   </div>
-  <div class="nav-right">
-    <span class="dot"></span>
-    <span class="clk" id="clk">--:--:--</span>
+  <div class="tb-sep"></div>
+  <button class="tb-btn active" id="tf-active-btn" onclick="cycleTF(this)">1m</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn">&#9650;&#9660; Indicators</button>
+  <button class="tb-btn">&#9638; Templates</button>
+  <button class="tb-btn">&#9201; Alert</button>
+  <button class="tb-btn">&#9654;&#9654; Replay</button>
+  <div class="tb-right">
+    <span class="dot-live"></span>
+    <span style="color:var(--text2);font-size:11px" id="clk">--:--</span>
+    <button class="tb-publish">Publish</button>
+    <button class="tb-trade">Trade</button>
   </div>
-</nav>
+</div>
 
-<div class="ticker"><div class="tscroll" id="tscroll"><span style="color:var(--text2);font-size:11px;padding:0 20px">Loading rates...</span></div></div>
+<!-- TICKER -->
+<div class="ticker"><div class="tscroll" id="tscroll"><span style="color:var(--text2);padding:0 16px">Loading...</span></div></div>
 
-<div class="layout">
-  <div class="sidebar">
-    <div class="sbhead"><input class="sbsearch" id="sbsearch" type="text" placeholder="Search symbol..." oninput="filterSB()"/></div>
-    <div class="sblabel" id="sblabel">Currencies vs GHS</div>
-    <div class="sblist" id="sblist"><div class="loading"><span class="spin"></span>Loading...</div></div>
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT TOOLBAR -->
+  <div class="ltbar">
+    <button class="lt-btn active" title="Cursor">&#10010;</button>
+    <button class="lt-btn" title="Hand">&#9995;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Trend line">&#8725;</button>
+    <button class="lt-btn" title="Horizontal line">&#8212;</button>
+    <button class="lt-btn" title="Ray">&#8594;</button>
+    <button class="lt-btn" title="Pitchfork">&#936;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Fib">&#966;</button>
+    <button class="lt-btn" title="Gann">&#9974;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Brush">&#9999;</button>
+    <button class="lt-btn" title="Text">T</button>
+    <button class="lt-btn" title="Note">&#128203;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Measure">&#8614;</button>
+    <button class="lt-btn" title="Zoom">&#9741;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Emoji">&#9786;</button>
+    <div class="lt-sep"></div>
+    <button class="lt-btn" title="Magnet">&#9878;</button>
+    <button class="lt-btn" title="Lock">&#128274;</button>
+    <button class="lt-btn" title="Trash" onclick="clearDrawings()">&#128465;</button>
   </div>
 
-  <div class="main">
-    <div class="chhead">
-      <div>
-        <div class="chsym" id="chsym">-</div>
-        <div class="chmeta">
-          <div class="cmitem">Open: <span id="chopen">-</span></div>
-          <div class="cmitem">High: <span id="chhigh">-</span></div>
-          <div class="cmitem">Low: <span id="chlow">-</span></div>
-          <div class="cmitem">Vol: <span id="chvol">-</span></div>
-        </div>
+  <!-- CHART AREA -->
+  <div class="chart-area">
+
+    <!-- CHART HEADER -->
+    <div class="chart-header">
+      <span class="ch-dot" id="ch-dot"></span>
+      <span class="ch-sym" id="ch-sym">XOF/GHS</span>
+      <span style="font-size:10px;color:var(--text2)" id="ch-subtype">Forex . GHS</span>
+      <div class="ch-ohlc">
+        <span>O <span id="ch-o">--</span></span>
+        <span>H <span id="ch-h">--</span></span>
+        <span>L <span id="ch-l">--</span></span>
+        <span>C <span id="ch-c">--</span></span>
+        <span id="ch-chg" class="ch-chg up">--</span>
       </div>
-      <div style="margin-left:14px">
-        <div class="chprice" id="chprice">-</div>
-        <div id="chchange" style="font-size:12px">-</div>
-      </div>
-      <div class="chtools">
-        <button class="tbtn active" onclick="setRange('1D',this)">1D</button>
-        <button class="tbtn" onclick="setRange('1W',this)">1W</button>
-        <button class="tbtn" onclick="setRange('1M',this)">1M</button>
-        <button class="tbtn" onclick="setRange('3M',this)">3M</button>
-        <button class="tbtn" onclick="setRange('1Y',this)">1Y</button>
+      <div class="ch-tf-btns">
+        <button class="tf-btn active" onclick="setTF('1m',this)">1m</button>
+        <button class="tf-btn" onclick="setTF('5m',this)">5m</button>
+        <button class="tf-btn" onclick="setTF('15m',this)">15m</button>
+        <button class="tf-btn" onclick="setTF('1H',this)">1H</button>
+        <button class="tf-btn" onclick="setTF('4H',this)">4H</button>
+        <button class="tf-btn" onclick="setTF('1D',this)">1D</button>
+        <button class="tf-btn" onclick="setTF('1W',this)">1W</button>
+        <button class="tf-btn" onclick="setTF('1M',this)">1M</button>
       </div>
     </div>
-    <div class="chartwrap">
-      <div class="canvaswrap">
-        <canvas id="mainChart" role="img" aria-label="Ghana currency exchange rate chart"></canvas>
+
+    <!-- CHART CANVAS -->
+    <div class="chart-body" id="chart-body">
+      <canvas id="mainChart"></canvas>
+      <div class="buy-sell-btns">
+        <button class="sell-btn" id="sell-btn">-- SELL</button>
+        <button style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:0 2px">0.00</button>
+        <button class="buy-btn" id="buy-btn">BUY --</button>
       </div>
+      <div class="price-tag" id="price-tag" style="top:50%">--</div>
     </div>
-    <div class="bbar" id="bbar"><div class="loading" style="flex:1"><span class="spin"></span>Loading market data...</div></div>
+
+    <!-- VOLUME -->
+    <div class="vol-area"><canvas id="volChart"></canvas></div>
+
+    <!-- TIME BAR -->
+    <div class="time-bar">
+      <div class="time-btns">
+        <button class="range-btn active" onclick="setRange('1D',this)">1D</button>
+        <button class="range-btn" onclick="setRange('5D',this)">5D</button>
+        <button class="range-btn" onclick="setRange('1M',this)">1M</button>
+        <button class="range-btn" onclick="setRange('3M',this)">3M</button>
+        <button class="range-btn" onclick="setRange('6M',this)">6M</button>
+        <button class="range-btn" onclick="setRange('YTD',this)">YTD</button>
+        <button class="range-btn" onclick="setRange('1Y',this)">1Y</button>
+        <button class="range-btn" onclick="setRange('5Y',this)">5Y</button>
+        <button class="range-btn" onclick="setRange('All',this)">All</button>
+      </div>
+      <div class="utc" id="utc-time">--:--:-- UTC</div>
+    </div>
+
   </div>
 
+  <!-- RIGHT PANEL - WATCHLIST -->
   <div class="rpanel">
-    <div class="ptabs">
-      <div class="ptab active" onclick="setRTab('info',this)">Info</div>
-      <div class="ptab" onclick="setRTab('bdc',this)">BDC Calc</div>
-      <div class="ptab" onclick="setRTab('market',this)">Market</div>
+    <div class="rp-topbar">
+      <span class="rp-title">Watchlist</span>
+      <button class="rp-icon">+</button>
+      <button class="rp-icon">&#9783;</button>
+      <button class="rp-icon">&#8942;</button>
     </div>
-    <div class="pbody active" id="rtab-info">
-      <div class="rptitle">Rate Details</div>
-      <div id="ratedetails"><div style="color:var(--text2);font-size:11px">Select a currency</div></div>
-      <br/>
-      <div class="rptitle">BoG Reference</div>
-      <div class="rprow"><span class="rplabel">Interbank</span><span class="rpval up" id="boginter">-</span></div>
-      <div class="rprow"><span class="rplabel">Buy</span><span class="rpval" id="bogbuy">-</span></div>
-      <div class="rprow"><span class="rplabel">Sell</span><span class="rpval" id="bogsell">-</span></div>
-      <div class="rprow"><span class="rplabel">Updated</span><span class="rpval" id="bogupdated">-</span></div>
+    <div class="wl-cols">
+      <span class="wl-col wl-col-sym">Symbol</span>
+      <span class="wl-col wl-col-last">Last</span>
+      <span class="wl-col wl-col-chg">Chg</span>
+      <span class="wl-col wl-col-pct">Chg%</span>
     </div>
-    <div class="pbody" id="rtab-bdc">
-      <div class="rptitle">BDC Spread Calculator</div>
-      <label class="calclabel">Currency</label>
-      <select id="calccurr" onchange="runCalc()">
-        <option value="XOF">XOF - CFA Franc (West Africa)</option>
+    <div class="wl-section">
+      <div class="wl-sec-label">&#9660; CFA / FOREX</div>
+    </div>
+    <div class="wl-list" id="wl-list"></div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="dp-sym" id="dp-sym">XOF/GHS</div>
+      <div class="dp-type" id="dp-type">West African CFA Franc . GHS</div>
+      <div class="dp-price" id="dp-price">--</div>
+      <div class="dp-chg up" id="dp-chg">--</div>
+      <div class="dp-status">&#9679; Market open</div>
+      <div class="dp-news">
+        <span id="dp-news-txt">Bank of Ghana maintains policy rate at 28% amid easing inflation pressure</span>
+        <div class="dp-news-time" id="dp-news-time">2 hours ago . Bank of Ghana</div>
+      </div>
+    </div>
+
+    <!-- BDC CALC -->
+    <div class="bdc-panel">
+      <div class="bdc-title">BDC Spread Calculator</div>
+      <select class="bdc-select" id="bdc-curr" onchange="calcBDC()">
+        <option value="XOF">XOF - CFA West Africa</option>
+        <option value="XAF">XAF - CFA Central Africa</option>
         <option value="USD">USD - US Dollar</option>
         <option value="GBP">GBP - British Pound</option>
         <option value="EUR">EUR - Euro</option>
-        <option value="CAD">CAD - Canadian Dollar</option>
       </select>
-      <label class="calclabel">Amount (foreign currency)</label>
-      <input class="calcinput" type="number" id="calcamt" value="1000" oninput="runCalc()"/>
-      <label class="calclabel">Your buy rate (GHS)</label>
-      <input class="calcinput" type="number" id="calcbuy" placeholder="e.g. 0.024" oninput="runCalc()"/>
-      <label class="calclabel">Your sell rate (GHS)</label>
-      <input class="calcinput" type="number" id="calcsell" placeholder="e.g. 0.026" oninput="runCalc()"/>
-      <div class="calcres" id="calcres"><span style="color:var(--text2);font-size:11px">Enter rates above to calculate</span></div>
-    </div>
-    <div class="pbody" id="rtab-market">
-      <div class="rptitle">GSE Summary</div>
-      <div class="rprow"><span class="rplabel">GSE-CI Index</span><span class="rpval up">13,164</span></div>
-      <div class="rprow"><span class="rplabel">Change</span><span class="rpval up">+0.04%</span></div>
-      <div class="rprow"><span class="rplabel">Market Cap</span><span class="rpval">GHS 256.4B</span></div>
-      <div class="rprow"><span class="rplabel">Volume</span><span class="rpval">1.65M shares</span></div>
-      <div class="rprow"><span class="rplabel">Gainers</span><span class="rpval up">6</span></div>
-      <div class="rprow"><span class="rplabel">Losers</span><span class="rpval dn">5</span></div>
-      <br/>
-      <div class="rptitle">Top Gainers</div>
-      <div class="rprow"><span class="rplabel">CLYD</span><span class="rpval up">+10.00%</span></div>
-      <div class="rprow"><span class="rplabel">SIC</span><span class="rpval up">+5.64%</span></div>
-      <div class="rprow"><span class="rplabel">MTN</span><span class="rpval up">+4.32%</span></div>
-      <br/>
-      <div class="rptitle">Top Losers</div>
-      <div class="rprow"><span class="rplabel">ACCESS</span><span class="rpval dn">-9.98%</span></div>
-      <div class="rprow"><span class="rplabel">EGL</span><span class="rpval dn">-2.06%</span></div>
-      <div class="rprow"><span class="rplabel">SOGEGH</span><span class="rpval dn">-0.93%</span></div>
+      <div class="bdc-row">
+        <input class="bdc-input" type="number" id="bdc-buy" placeholder="Buy rate" oninput="calcBDC()"/>
+        <input class="bdc-input" type="number" id="bdc-sell" placeholder="Sell rate" oninput="calcBDC()"/>
+      </div>
+      <input class="bdc-input" type="number" id="bdc-amt" value="1000" placeholder="Amount" oninput="calcBDC()" style="width:100%;margin-bottom:6px"/>
+      <div class="bdc-result" id="bdc-result">
+        <div class="bdc-res-row"><span class="bdc-res-key">Gross profit</span><span class="bdc-res-val up" id="bdc-profit">--</span></div>
+        <div class="bdc-res-row"><span class="bdc-res-key">Margin</span><span class="bdc-res-val" id="bdc-margin">--</span></div>
+        <div class="bdc-res-row"><span class="bdc-res-key">Capital needed</span><span class="bdc-res-val" id="bdc-capital">--</span></div>
+        <div class="bdc-res-row"><span class="bdc-res-key">Live rate</span><span class="bdc-res-val up" id="bdc-live">--</span></div>
+      </div>
     </div>
   </div>
+
 </div>
 
 <script>
 var rates = {};
-var currentItem = null;
+var currentSym = 'XOF';
 var currentRange = '1D';
-var currentView = 'forex';
-var mainChart = null;
-var allItems = [];
-
-var FOREX = [
-  {sym:'XOF/GHS',name:'CFA Franc - West Africa',code:'XOF'},
-  {sym:'XAF/GHS',name:'CFA Franc - Central Africa',code:'XAF'},
-  {sym:'USD/GHS',name:'US Dollar',code:'USD'},
-  {sym:'GBP/GHS',name:'British Pound',code:'GBP'},
-  {sym:'EUR/GHS',name:'Euro',code:'EUR'},
-  {sym:'CAD/GHS',name:'Canadian Dollar',code:'CAD'},
-  {sym:'CHF/GHS',name:'Swiss Franc',code:'CHF'},
-  {sym:'CNY/GHS',name:'Chinese Yuan',code:'CNY'},
-  {sym:'JPY/GHS',name:'Japanese Yen',code:'JPY'},
-  {sym:'AUD/GHS',name:'Australian Dollar',code:'AUD'},
-  {sym:'NZD/GHS',name:'New Zealand Dollar',code:'NZD'},
-  {sym:'NGN/GHS',name:'Nigerian Naira',code:'NGN'},
-  {sym:'ZAR/GHS',name:'South African Rand',code:'ZAR'},
-  {sym:'KES/GHS',name:'Kenyan Shilling',code:'KES'},
-  {sym:'AED/GHS',name:'UAE Dirham',code:'AED'},
-  {sym:'SAR/GHS',name:'Saudi Riyal',code:'SAR'},
-  {sym:'INR/GHS',name:'Indian Rupee',code:'INR'},
-  {sym:'BRL/GHS',name:'Brazilian Real',code:'BRL'},
-  {sym:'MXN/GHS',name:'Mexican Peso',code:'MXN'},
-  {sym:'SGD/GHS',name:'Singapore Dollar',code:'SGD'},
-  {sym:'HKD/GHS',name:'Hong Kong Dollar',code:'HKD'},
-  {sym:'SEK/GHS',name:'Swedish Krona',code:'SEK'},
-  {sym:'NOK/GHS',name:'Norwegian Krone',code:'NOK'},
-  {sym:'DKK/GHS',name:'Danish Krone',code:'DKK'},
-  {sym:'TZS/GHS',name:'Tanzanian Shilling',code:'TZS'},
-  {sym:'UGX/GHS',name:'Ugandan Shilling',code:'UGX'},
-  {sym:'EGP/GHS',name:'Egyptian Pound',code:'EGP'},
-  {sym:'MAD/GHS',name:'Moroccan Dirham',code:'MAD'},
-  {sym:'QAR/GHS',name:'Qatari Riyal',code:'QAR'},
-  {sym:'KWD/GHS',name:'Kuwaiti Dinar',code:'KWD'},
-];
-
-var GSE = [
-  {sym:'MTN',name:'MTN Ghana',price:1.82,change:4.32,open:1.75,high:1.85,low:1.74,vol:'2.34M'},
-  {sym:'GCB',name:'GCB Bank',price:5.40,change:1.20,open:5.34,high:5.45,low:5.30,vol:'184K'},
-  {sym:'EGH',name:'Ecobank Ghana',price:9.21,change:-0.65,open:9.27,high:9.30,low:9.15,vol:'95K'},
-  {sym:'SCB',name:'Standard Chartered',price:22.50,change:0.80,open:22.32,high:22.60,low:22.20,vol:'41K'},
-  {sym:'ETI',name:'Ecobank Transnational',price:0.28,change:3.87,open:0.27,high:0.29,low:0.27,vol:'5.12M'},
-  {sym:'GOIL',name:'GOIL PLC',price:3.14,change:-0.32,open:3.15,high:3.18,low:3.10,vol:'220K'},
-  {sym:'SIC',name:'SIC Insurance',price:0.19,change:5.64,open:0.18,high:0.20,low:0.18,vol:'890K'},
-  {sym:'ACCESS',name:'Access Bank Ghana',price:37.81,change:-9.98,open:41.90,high:42.00,low:37.50,vol:'48K'},
-  {sym:'CLYD',name:'Clydestone Ghana',price:1.32,change:10.0,open:1.20,high:1.33,low:1.19,vol:'120K'},
-  {sym:'EGL',name:'Enterprise Group',price:2.88,change:-2.06,open:2.94,high:2.95,low:2.86,vol:'55K'},
-  {sym:'CAL',name:'CalBank',price:1.10,change:0.91,open:1.09,high:1.12,low:1.08,vol:'430K'},
-  {sym:'GGBL',name:'Guinness Ghana',price:4.50,change:1.12,open:4.45,high:4.55,low:4.43,vol:'95K'},
-  {sym:'FML',name:'Fan Milk',price:4.12,change:-0.32,open:4.14,high:4.17,low:4.09,vol:'65K'},
-  {sym:'SOGEGH',name:'Societe Generale Ghana',price:1.07,change:-0.93,open:1.08,high:1.09,low:1.06,vol:'310K'},
-  {sym:'UNIL',name:'Unilever Ghana',price:14.20,change:0.70,open:14.10,high:14.25,low:14.05,vol:'22K'},
-  {sym:'BOPP',name:'Benso Oil Palm',price:8.10,change:1.25,open:8.00,high:8.15,low:7.98,vol:'18K'},
-  {sym:'TOTAL',name:'TotalEnergies Ghana',price:6.80,change:0.45,open:6.77,high:6.85,low:6.74,vol:'78K'},
-];
+var currentTF = '1m';
+var mainCtx, volCtx, mainChart, volChart;
+var candleData = [];
 
 var FALLBACK = {
   XOF:0.0249,XAF:0.0249,USD:14.95,GBP:19.42,EUR:16.38,CAD:10.88,
   CHF:16.70,CNY:2.07,JPY:0.101,AUD:9.58,NZD:8.82,NGN:0.0093,
-  ZAR:0.82,KES:0.116,AED:4.07,SAR:3.98,INR:0.179,BRL:2.68,
-  MXN:0.74,SGD:11.18,HKD:1.92,SEK:1.43,NOK:1.38,DKK:2.19,
-  TZS:0.0057,UGX:0.004,EGP:0.30,MAD:1.48,QAR:4.10,KWD:48.70
+  ZAR:0.82,KES:0.116,AED:4.07,SAR:3.98,INR:0.179,
+  TZS:0.0057,EGP:0.30,MAD:1.48,QAR:4.10,KWD:48.70
 };
 
-function clockTick() {
-  document.getElementById('clk').textContent = new Date().toLocaleTimeString('en-GH',{hour12:false});
+var WATCHLIST = [
+  {code:'XOF',sym:'XOF/GHS',name:'CFA West Africa',color:'#1D9E75',badge:'CFA'},
+  {code:'XAF',sym:'XAF/GHS',name:'CFA Central Africa',color:'#1D9E75',badge:'CFA'},
+  {code:'USD',sym:'USD/GHS',name:'US Dollar',color:'#2962ff',badge:'USD'},
+  {code:'GBP',sym:'GBP/GHS',name:'British Pound',color:'#9c27b0',badge:'GBP'},
+  {code:'EUR',sym:'EUR/GHS',name:'Euro',color:'#0288d1',badge:'EUR'},
+  {code:'CAD',sym:'CAD/GHS',name:'Canadian Dollar',color:'#e53935',badge:'CAD'},
+  {code:'CHF',sym:'CHF/GHS',name:'Swiss Franc',color:'#c62828',badge:'CHF'},
+  {code:'CNY',sym:'CNY/GHS',name:'Chinese Yuan',color:'#d32f2f',badge:'CNY'},
+  {code:'NGN',sym:'NGN/GHS',name:'Nigerian Naira',color:'#2e7d32',badge:'NGN'},
+  {code:'ZAR',sym:'ZAR/GHS',name:'South African Rand',color:'#1565c0',badge:'ZAR'},
+  {code:'KES',sym:'KES/GHS',name:'Kenyan Shilling',color:'#00695c',badge:'KES'},
+  {code:'AED',sym:'AED/GHS',name:'UAE Dirham',color:'#558b2f',badge:'AED'},
+  {code:'GBP',sym:'MTN/GHS',name:'MTN Ghana (GSE)',color:'#f9a825',badge:'MTN'},
+  {code:'USD',sym:'GCB/GHS',name:'GCB Bank (GSE)',color:'#0277bd',badge:'GCB'},
+];
+
+var GSE_PRICES = {
+  'MTN/GHS':{price:1.82,change:4.32},
+  'GCB/GHS':{price:5.40,change:1.20},
+};
+
+function fmtP(v, code) {
+  var p = parseFloat(v);
+  if(isNaN(p)) return '--';
+  if(code==='KWD') return p.toFixed(4);
+  if(p < 0.1) return p.toFixed(4);
+  if(p < 10) return p.toFixed(4);
+  return p.toFixed(2);
 }
-setInterval(clockTick, 1000);
-clockTick();
+
+function clockTick() {
+  var now = new Date();
+  document.getElementById('clk').textContent = now.toLocaleTimeString('en-GH',{hour12:false,hour:'2-digit',minute:'2-digit'});
+  document.getElementById('utc-time').textContent = now.toUTCString().split(' ')[4]+' UTC';
+}
+setInterval(clockTick,1000); clockTick();
 
 function loadRates() {
   Object.assign(rates, FALLBACK);
-  onRatesLoaded();
-  var APIs = [
+  init();
+  var apis = [
     'https://open.er-api.com/v6/latest/GHS',
-    'https://api.exchangerate-api.com/v4/latest/GHS',
-    'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/ghs.json'
+    'https://api.exchangerate-api.com/v4/latest/GHS'
   ];
-  function tryAPI(index) {
-    if(index >= APIs.length) return;
-    fetch(APIs[index])
-      .then(function(r){ return r.json(); })
+  function tryAPI(i) {
+    if(i >= apis.length) return;
+    fetch(apis[i])
+      .then(function(r){return r.json();})
       .then(function(d){
-        var updated = false;
-        if(d && d.rates){
-          Object.keys(d.rates).forEach(function(code){
-            if(code !== 'GHS'){ rates[code] = parseFloat((1/d.rates[code]).toFixed(6)); updated=true; }
-          });
-        } else if(d && d.ghs){
-          Object.keys(d.ghs).forEach(function(code){
-            if(code !== 'ghs'){ rates[code.toUpperCase()] = parseFloat((d.ghs[code]).toFixed(6)); updated=true; }
+        var ok = false;
+        if(d && d.rates) {
+          Object.keys(d.rates).forEach(function(c){
+            if(c!=='GHS'){rates[c]=parseFloat((1/d.rates[c]).toFixed(6));ok=true;}
           });
         }
-        if(updated){ onRatesLoaded(); }
-        else { tryAPI(index+1); }
+        if(ok) { buildWatchlist(); updateHeader(); buildTicker(); }
+        else tryAPI(i+1);
       })
-      .catch(function(){ tryAPI(index+1); });
+      .catch(function(){tryAPI(i+1);});
   }
   tryAPI(0);
 }
 
-function onRatesLoaded() {
+function init() {
+  buildWatchlist();
   buildTicker();
-  buildSidebar();
-  buildBottomBar();
-  selectItem(FOREX[0]);
+  selectSym('XOF');
 }
 
 function buildTicker() {
-  var items = FOREX.slice(0,10).concat(GSE.slice(0,5));
   var html = '';
-  for(var rep=0; rep<2; rep++){
-    items.forEach(function(item){
-      var price = item.code ? (rates[item.code]||FALLBACK[item.code]||0) : item.price;
-      var chg = item.change !== undefined ? item.change : (Math.random()*2-0.8).toFixed(2);
-      var cls = parseFloat(chg) >= 0 ? 'up' : 'dn';
-      var sign = parseFloat(chg) >= 0 ? '+' : '';
-      var sym = item.sym || item.code+'/GHS';
-      var priceStr = fmtPrice(price, item.code);
-      html += '<span class="titem"><span class="tsym">'+sym+'</span><span>'+priceStr+'</span><span class="'+cls+'">'+sign+parseFloat(chg).toFixed(2)+'%</span></span>';
+  for(var rep=0;rep<2;rep++){
+    WATCHLIST.slice(0,10).forEach(function(item){
+      var price = GSE_PRICES[item.sym] ? GSE_PRICES[item.sym].price : (rates[item.code]||FALLBACK[item.code]||0);
+      var chg = GSE_PRICES[item.sym] ? GSE_PRICES[item.sym].change : ((Math.random()*2-0.8).toFixed(2));
+      var cls = parseFloat(chg)>=0?'up':'dn';
+      var sign = parseFloat(chg)>=0?'+':'';
+      html += '<span class="titem"><span class="tsym">'+item.sym+'</span><span>'+fmtP(price,item.code)+'</span><span class="'+cls+'">'+sign+parseFloat(chg).toFixed(2)+'%</span></span>';
     });
   }
   document.getElementById('tscroll').innerHTML = html;
 }
 
-function fmtPrice(price, code) {
-  var p = parseFloat(price);
-  if(isNaN(p)) return '-';
-  if(code === 'JPY' || code === 'NGN' || code === 'XOF' || code === 'XAF' || code === 'TZS' || code === 'UGX') return p.toFixed(4);
-  if(code === 'KWD') return p.toFixed(4);
-  return p.toFixed(4);
-}
-
-function buildSidebar() {
-  document.getElementById('sblabel').textContent = currentView === 'gse' ? 'GSE Listed Stocks' : 'Currencies vs GHS';
-  allItems = currentView === 'gse' ? GSE : FOREX;
-  renderSB(allItems);
-}
-
-function renderSB(items) {
+function buildWatchlist() {
   var html = '';
-  items.forEach(function(item, i){
-    var price = item.code ? (rates[item.code]||FALLBACK[item.code]||0) : item.price;
-    var chg = item.change !== undefined ? item.change : (Math.random()*1.4-0.5).toFixed(2);
-    var cls = parseFloat(chg) >= 0 ? 'up' : 'dn';
-    var sign = parseFloat(chg) >= 0 ? '+' : '';
-    var sym = item.sym || item.code+'/GHS';
-    var sel = currentItem && currentItem.sym === sym ? ' sel' : '';
-    html += '<div class="sbitem'+sel+'" onclick=\'selectItem('+JSON.stringify(item)+')\'>'+
-      '<div><div class="sbsym">'+sym+'</div><div class="sbname">'+item.name+'</div></div>'+
-      '<div class="sbprice"><div class="sbpval">'+fmtPrice(price, item.code)+'</div>'+
-      '<div class="sbpchg '+cls+'">'+sign+parseFloat(chg).toFixed(2)+'%</div></div>'+
-      '</div>';
+  WATCHLIST.forEach(function(item){
+    var price = GSE_PRICES[item.sym] ? GSE_PRICES[item.sym].price : (rates[item.code]||FALLBACK[item.code]||0);
+    var chg = GSE_PRICES[item.sym] ? GSE_PRICES[item.sym].change : parseFloat((Math.random()*2-0.8).toFixed(2));
+    var abs = Math.abs(price * chg/100);
+    var cls = chg>=0?'up':'dn';
+    var sign = chg>=0?'+':'';
+    var sel = currentSym===item.code && item.sym.indexOf('MTN')<0 ? ' sel':'';
+    html += '<div class="wl-item'+sel+'" onclick="selectSym(\''+item.code+'\',\''+item.sym+'\',\''+item.name+'\')">';
+    html += '<div class="wl-badge" style="background:'+item.color+'">'+item.badge.slice(0,3)+'</div>';
+    html += '<div class="wl-sym-wrap"><div class="wl-sym">'+item.sym+'</div><div class="wl-name">'+item.name+'</div></div>';
+    html += '<div class="wl-last">'+fmtP(price,item.code)+'</div>';
+    html += '<div class="wl-chg '+cls+'">'+sign+abs.toFixed(4)+'</div>';
+    html += '<div class="wl-pct '+cls+'">'+sign+parseFloat(chg).toFixed(2)+'%</div>';
+    html += '</div>';
   });
-  document.getElementById('sblist').innerHTML = html || '<div style="padding:12px;color:var(--text2)">No results</div>';
+  document.getElementById('wl-list').innerHTML = html;
 }
 
-function filterSB() {
-  var q = document.getElementById('sbsearch').value.toLowerCase();
-  var filtered = allItems.filter(function(item){
-    return (item.sym||'').toLowerCase().includes(q) || item.name.toLowerCase().includes(q) || (item.code||'').toLowerCase().includes(q);
-  });
-  renderSB(filtered);
-}
-
-function selectItem(item) {
-  currentItem = item;
-  var price = item.code ? (rates[item.code]||FALLBACK[item.code]||0) : item.price;
-  var chg = item.change !== undefined ? item.change : (Math.random()*2-0.8).toFixed(2);
-  var cls = parseFloat(chg) >= 0 ? 'up' : 'dn';
-  var sign = parseFloat(chg) >= 0 ? '+' : '';
-  var sym = item.sym || item.code+'/GHS';
+function selectSym(code, sym, name) {
+  currentSym = code;
+  var displaySym = sym || code+'/GHS';
+  var displayName = name || code+' vs GHS';
+  var price = rates[code]||FALLBACK[code]||0;
+  var chg = parseFloat((Math.random()*2.5-0.8).toFixed(2));
+  var cls = chg>=0?'up':'dn';
+  var sign = chg>=0?'+':'';
   var p = parseFloat(price);
 
-  document.getElementById('chsym').textContent = sym;
-  document.getElementById('chprice').textContent = fmtPrice(price, item.code);
-  document.getElementById('chprice').className = 'chprice '+cls;
-  document.getElementById('chchange').textContent = sign+parseFloat(chg).toFixed(2)+'%  today';
-  document.getElementById('chchange').className = cls;
-  document.getElementById('chopen').textContent = fmtPrice(p*0.998, item.code);
-  document.getElementById('chhigh').textContent = fmtPrice(p*1.009, item.code);
-  document.getElementById('chlow').textContent  = fmtPrice(p*0.991, item.code);
-  document.getElementById('chvol').textContent  = item.vol || (Math.floor(Math.random()*900+100)+'K');
+  document.getElementById('top-sym').textContent = displaySym;
+  document.getElementById('ch-sym').textContent = displaySym;
+  document.getElementById('ch-subtype').textContent = 'Forex . GHS';
+  document.getElementById('ch-o').textContent = fmtP(p*0.998,code);
+  document.getElementById('ch-h').textContent = fmtP(p*1.009,code);
+  document.getElementById('ch-l').textContent = fmtP(p*0.991,code);
+  document.getElementById('ch-c').textContent = fmtP(p,code);
+  var chgEl = document.getElementById('ch-chg');
+  chgEl.textContent = sign+chg.toFixed(2)+'% ('+sign+(p*chg/100).toFixed(4)+')';
+  chgEl.className = 'ch-chg '+cls;
 
-  var bogInter = fmtPrice(p, item.code);
-  var bogBuy   = fmtPrice(p*0.994, item.code);
-  var bogSell  = fmtPrice(p*1.007, item.code);
-  document.getElementById('boginter').textContent  = bogInter;
-  document.getElementById('bogbuy').textContent    = bogBuy;
-  document.getElementById('bogsell').textContent   = bogSell;
-  document.getElementById('bogupdated').textContent = new Date().toLocaleDateString('en-GH');
+  document.getElementById('sell-btn').textContent = fmtP(p*0.997,code)+' SELL';
+  document.getElementById('buy-btn').textContent = 'BUY '+fmtP(p*1.003,code);
 
-  document.getElementById('ratedetails').innerHTML =
-    '<div class="rprow"><span class="rplabel">Symbol</span><span class="rpval">'+sym+'</span></div>'+
-    '<div class="rprow"><span class="rplabel">Last price</span><span class="rpval '+cls+'">'+fmtPrice(price,item.code)+'</span></div>'+
-    '<div class="rprow"><span class="rplabel">24h change</span><span class="rpval '+cls+'">'+sign+parseFloat(chg).toFixed(2)+'%</span></div>'+
-    '<div class="rprow"><span class="rplabel">52w High</span><span class="rpval">'+fmtPrice(p*1.22,item.code)+'</span></div>'+
-    '<div class="rprow"><span class="rplabel">52w Low</span><span class="rpval">'+fmtPrice(p*0.78,item.code)+'</span></div>';
+  document.getElementById('dp-sym').textContent = displaySym;
+  document.getElementById('dp-type').textContent = displayName+' . GHS';
+  document.getElementById('dp-price').textContent = fmtP(p,code);
+  document.getElementById('dp-price').className = 'dp-price '+cls;
+  document.getElementById('dp-chg').textContent = 'GHS '+sign+(p*chg/100).toFixed(4)+' ('+sign+chg.toFixed(2)+'%)';
+  document.getElementById('dp-chg').className = 'dp-chg '+cls;
 
-  buildSidebar();
-  drawChart(price, chg, item.code);
+  document.getElementById('bdc-live').textContent = fmtP(p,code);
+
+  buildWatchlist();
+  generateCandles(p, chg);
 }
 
-function genData(base, pts, vol) {
-  var p = parseFloat(base) * 0.98;
-  var data = [];
-  for(var i=0;i<pts;i++){
-    p = p + (Math.random()-0.48)*p*vol;
-    data.push(parseFloat(p.toFixed(6)));
+function updateHeader() {
+  selectSym(currentSym);
+}
+
+function generateCandles(basePrice, overallChg) {
+  var n = {'1D':60,'5D':60,'1M':45,'3M':60,'6M':60,'YTD':60,'1Y':60,'5Y':60,'All':80}[currentRange]||60;
+  var vol_map = {'1D':0.002,'5D':0.003,'1M':0.006,'3M':0.009,'6M':0.012,'YTD':0.01,'1Y':0.015,'5Y':0.025,'All':0.03};
+  var vol = vol_map[currentRange]||0.003;
+  var p = parseFloat(basePrice) * 0.97;
+  candleData = [];
+  for(var i=0;i<n;i++) {
+    var o = p;
+    var move = (Math.random()-0.47)*p*vol;
+    var c = o + move;
+    var h = Math.max(o,c) + Math.random()*p*vol*0.5;
+    var ll = Math.min(o,c) - Math.random()*p*vol*0.5;
+    var v = Math.floor(Math.random()*900000+100000);
+    candleData.push({o:o,h:h,l:ll,c:c,v:v});
+    p = c;
   }
-  return data;
+  drawCandles();
+  drawVolume();
+  updatePriceTag(parseFloat(basePrice));
 }
 
-function genLabels(pts, range) {
-  var now = new Date();
-  var labels = [];
-  for(var i=pts-1;i>=0;i--){
-    var d = new Date(now);
-    if(range==='1D'){d.setHours(d.getHours()-i);labels.push(d.toLocaleTimeString('en-GH',{hour:'2-digit',minute:'2-digit',hour12:false}));}
-    else if(range==='1W'){d.setDate(d.getDate()-Math.floor(i/4));labels.push(d.toLocaleDateString('en-GH',{month:'short',day:'numeric'}));}
-    else if(range==='1M'){d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString('en-GH',{month:'short',day:'numeric'}));}
-    else if(range==='3M'){d.setDate(d.getDate()-i*3);labels.push(d.toLocaleDateString('en-GH',{month:'short',day:'numeric'}));}
-    else{d.setDate(d.getDate()-i*7);labels.push(d.toLocaleDateString('en-GH',{month:'short',day:'numeric'}));}
+function drawCandles() {
+  var body = document.getElementById('chart-body');
+  var W = body.clientWidth;
+  var H = body.clientHeight;
+  var canvas = document.getElementById('mainChart');
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  if(!candleData.length) return;
+
+  var prices = candleData.reduce(function(a,c){return a.concat([c.h,c.l]);}, []);
+  var minP = Math.min.apply(null,prices)*0.9995;
+  var maxP = Math.max.apply(null,prices)*1.0005;
+  var pRange = maxP - minP;
+  var pad = 50;
+  var chartW = W - pad;
+  var chartH = H - 10;
+
+  function py(price){ return chartH - ((price - minP)/pRange)*chartH; }
+
+  var n = candleData.length;
+  var cw = Math.max(3, Math.floor(chartW/n) - 1);
+  var cw2 = Math.max(1, Math.floor(cw*0.6));
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(42,46,57,0.8)';
+  ctx.lineWidth = 0.5;
+  for(var gi=0;gi<6;gi++){
+    var gy = Math.floor(H*gi/5);
+    ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W-pad,gy); ctx.stroke();
+    var gPrice = maxP - (pRange*gi/5);
+    ctx.fillStyle = '#787b86';
+    ctx.font = '10px Trebuchet MS';
+    ctx.textAlign = 'left';
+    ctx.fillText(fmtP(gPrice,currentSym), W-pad+4, gy+4);
   }
-  return labels;
-}
 
-function setRange(r, btn) {
-  currentRange = r;
-  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
-  if(currentItem) drawChart(
-    currentItem.code ? (rates[currentItem.code]||FALLBACK[currentItem.code]||currentItem.price) : currentItem.price,
-    currentItem.change||1.2, currentItem.code
-  );
-}
+  // Candles
+  candleData.forEach(function(c,i){
+    var x = Math.floor(i*(chartW/n) + cw*0.1);
+    var isUp = c.c >= c.o;
+    var col = isUp ? '#26a69a' : '#ef5350';
+    ctx.strokeStyle = col;
+    ctx.fillStyle = col;
+    ctx.lineWidth = 1;
 
-function drawChart(price, chg, code) {
-  var ptMap={'1D':24,'1W':28,'1M':30,'3M':30,'1Y':52};
-  var volMap={'1D':0.003,'1W':0.006,'1M':0.009,'3M':0.014,'1Y':0.02};
-  var pts = ptMap[currentRange]||24;
-  var vol = volMap[currentRange]||0.003;
-  var data   = genData(price, pts, vol);
-  var labels = genLabels(pts, currentRange);
-  var isUp   = parseFloat(chg) >= 0;
-  var lineCol = isUp ? '#26a69a' : '#ef5350';
-  var fillCol = isUp ? 'rgba(38,166,154,0.07)' : 'rgba(239,83,80,0.07)';
+    // Wick
+    ctx.beginPath();
+    ctx.moveTo(x + cw/2, py(c.h));
+    ctx.lineTo(x + cw/2, py(c.l));
+    ctx.stroke();
 
-  if(mainChart){mainChart.destroy();mainChart=null;}
-  mainChart = new Chart(document.getElementById('mainChart'),{
-    type:'line',
-    data:{labels:labels,datasets:[{
-      data:data,borderColor:lineCol,backgroundColor:fillCol,
-      borderWidth:1.5,fill:true,pointRadius:0,pointHoverRadius:4,tension:0.3
-    }]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          mode:'index',intersect:false,
-          backgroundColor:'#1e222d',borderColor:'#2a2e39',borderWidth:1,
-          titleColor:'#787b86',bodyColor:'#d1d4dc',
-          callbacks:{label:function(ctx){return ' '+ctx.parsed.y.toFixed(6);}}
-        }
-      },
-      scales:{
-        x:{grid:{color:'rgba(42,46,57,0.7)'},ticks:{color:'#787b86',font:{size:10},maxTicksLimit:8,maxRotation:0}},
-        y:{position:'right',grid:{color:'rgba(42,46,57,0.7)'},ticks:{color:'#787b86',font:{size:10},callback:function(v){return v.toFixed(4);}}}
-      },
-      animation:{duration:350}
+    // Body
+    var bodyTop = py(Math.max(c.o,c.c));
+    var bodyH = Math.max(1, Math.abs(py(c.o)-py(c.c)));
+    if(isUp){
+      ctx.strokeRect(x, bodyTop, cw2, bodyH);
+    } else {
+      ctx.fillRect(x, bodyTop, cw2, bodyH);
     }
   });
+
+  // Current price line
+  var lastC = candleData[candleData.length-1].c;
+  var lineY = Math.floor(py(lastC));
+  ctx.setLineDash([3,3]);
+  ctx.strokeStyle = '#26a69a';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(0,lineY); ctx.lineTo(W-pad,lineY); ctx.stroke();
+  ctx.setLineDash([]);
 }
 
-function buildBottomBar() {
-  var metrics = [
-    {label:'XOF/GHS',val:fmtPrice(rates.XOF||FALLBACK.XOF,'XOF'),sub:'CFA West Africa',cls:'up'},
-    {label:'XAF/GHS',val:fmtPrice(rates.XAF||FALLBACK.XAF,'XAF'),sub:'CFA Central Africa',cls:'up'},
-    {label:'USD/GHS',val:fmtPrice(rates.USD||FALLBACK.USD,'USD'),sub:'US Dollar',cls:'up'},
-    {label:'GBP/GHS',val:fmtPrice(rates.GBP||FALLBACK.GBP,'GBP'),sub:'British Pound',cls:'up'},
-    {label:'EUR/GHS',val:fmtPrice(rates.EUR||FALLBACK.EUR,'EUR'),sub:'Euro',cls:'up'},
-    {label:'GSE-CI',val:'13,164',sub:'+0.04% today',cls:'up'},
-    {label:'Policy Rate',val:'28.0%',sub:'Bank of Ghana',cls:''},
-    {label:'91-Day TBill',val:'28.6%',sub:'Yield',cls:'up'},
-  ];
-  document.getElementById('bbar').innerHTML = metrics.map(function(m){
-    return '<div class="bmet"><div class="bmlabel">'+m.label+'</div><div class="bmval '+m.cls+'">'+m.val+'</div><div class="bmsub">'+m.sub+'</div></div>';
-  }).join('');
+function drawVolume() {
+  var body = document.getElementById('chart-body');
+  var W = body.clientWidth;
+  var canvas = document.getElementById('volChart');
+  var H = 60;
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  if(!candleData.length) return;
+
+  var pad = 50;
+  var chartW = W - pad;
+  var maxV = Math.max.apply(null, candleData.map(function(c){return c.v;}));
+  var n = candleData.length;
+  var cw = Math.max(2, Math.floor(chartW/n) - 1);
+  var cw2 = Math.max(1, Math.floor(cw*0.6));
+
+  candleData.forEach(function(c,i){
+    var x = Math.floor(i*(chartW/n) + cw*0.1);
+    var barH = Math.floor((c.v/maxV)*(H-6));
+    var isUp = c.c >= c.o;
+    ctx.fillStyle = isUp ? 'rgba(38,166,154,0.5)' : 'rgba(239,83,80,0.5)';
+    ctx.fillRect(x, H-barH, cw2, barH);
+  });
+
+  // Vol label
+  ctx.fillStyle = '#787b86';
+  ctx.font = '10px Trebuchet MS';
+  ctx.textAlign = 'left';
+  var lastVol = candleData[candleData.length-1].v;
+  var volStr = lastVol > 1000000 ? (lastVol/1000000).toFixed(2)+'M' : (lastVol/1000).toFixed(0)+'K';
+  ctx.fillText('Vol '+volStr, 6, 12);
 }
 
-function runCalc() {
-  var curr  = document.getElementById('calccurr').value;
-  var amt   = parseFloat(document.getElementById('calcamt').value)||0;
-  var buy   = parseFloat(document.getElementById('calcbuy').value)||0;
-  var sell  = parseFloat(document.getElementById('calcsell').value)||0;
-  var res   = document.getElementById('calcres');
-  if(!buy||!sell||!amt){res.innerHTML='<span style="color:var(--text2);font-size:11px">Enter buy rate, sell rate and amount</span>';return;}
-  var spread  = sell - buy;
-  var profit  = spread * amt;
-  var margin  = ((spread/buy)*100).toFixed(2);
-  var capital = (buy*amt).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
-  var live    = rates[curr]||FALLBACK[curr]||0;
-  var safe    = live ? buy <= live*1.005 : true;
-  res.innerHTML =
-    '<div class="calcrow"><span class="calckey">Spread / unit</span><span class="calcval">GHS '+spread.toFixed(6)+'</span></div>'+
-    '<div class="calcrow"><span class="calckey">Gross profit</span><span class="calcval up">GHS '+profit.toFixed(2)+'</span></div>'+
-    '<div class="calcrow"><span class="calckey">Margin</span><span class="calcval">'+margin+'%</span></div>'+
-    '<div class="calcrow"><span class="calckey">Capital needed</span><span class="calcval">GHS '+capital+'</span></div>'+
-    (live?'<div class="calcrow"><span class="calckey">Live rate</span><span class="calcval">'+fmtPrice(live,curr)+'</span></div>'+
-    '<div style="font-size:10px;margin-top:6px;color:'+(safe?'#26a69a':'#ef5350')+'">'+(safe?'Buy rate is within market range':'Buy rate is above live rate - review')+'</div>':'');
+function updatePriceTag(price) {
+  var body = document.getElementById('chart-body');
+  var H = body.clientHeight;
+  var tag = document.getElementById('price-tag');
+  tag.textContent = fmtP(price, currentSym);
+  // position near middle
+  tag.style.top = Math.floor(H*0.45)+'px';
 }
 
-function setView(view, btn) {
-  currentView = view;
-  document.querySelectorAll('.ntab').forEach(function(b){b.classList.remove('active')});
+function setTF(tf, btn) {
+  currentTF = tf;
+  document.querySelectorAll('.tf-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
-  currentItem = null;
-  buildSidebar();
-  if(view==='gse'){selectItem(GSE[0]);}
-  else if(view==='bdc'){setRTab('bdc',document.querySelectorAll('.ptab')[1]);}
-  else{selectItem(FOREX[0]);}
+  document.getElementById('tf-active-btn').textContent = tf;
+  var p = rates[currentSym]||FALLBACK[currentSym]||0;
+  generateCandles(p, 1.2);
 }
 
-function setRTab(tab, el) {
-  document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active')});
-  document.querySelectorAll('.pbody').forEach(function(b){b.classList.remove('active')});
-  el.classList.add('active');
-  document.getElementById('rtab-'+tab).classList.add('active');
+function setRange(range, btn) {
+  currentRange = range;
+  document.querySelectorAll('.range-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var p = rates[currentSym]||FALLBACK[currentSym]||0;
+  generateCandles(p, 1.2);
 }
+
+function calcBDC() {
+  var code = document.getElementById('bdc-curr').value;
+  var buy  = parseFloat(document.getElementById('bdc-buy').value)||0;
+  var sell = parseFloat(document.getElementById('bdc-sell').value)||0;
+  var amt  = parseFloat(document.getElementById('bdc-amt').value)||0;
+  if(!buy||!sell||!amt) return;
+  var spread = sell-buy;
+  var profit = spread*amt;
+  var margin = ((spread/buy)*100).toFixed(2);
+  var capital = (buy*amt).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var live = rates[code]||FALLBACK[code]||0;
+  document.getElementById('bdc-profit').textContent = 'GHS '+profit.toFixed(2);
+  document.getElementById('bdc-margin').textContent = margin+'%';
+  document.getElementById('bdc-capital').textContent = 'GHS '+capital;
+  document.getElementById('bdc-live').textContent = fmtP(live,code);
+  var safe = live ? buy<=live*1.005 : true;
+  document.getElementById('bdc-live').style.color = safe ? 'var(--green)' : 'var(--red)';
+}
+
+function clearDrawings() {}
+function showSearch() {}
+function cycleTF(btn) {
+  var tfs = ['1m','5m','15m','1H','4H','1D'];
+  var cur = tfs.indexOf(currentTF);
+  var next = tfs[(cur+1)%tfs.length];
+  btn.textContent = next;
+  currentTF = next;
+  var p = rates[currentSym]||FALLBACK[currentSym]||0;
+  generateCandles(p, 1.2);
+}
+
+window.addEventListener('resize', function(){
+  var p = rates[currentSym]||FALLBACK[currentSym]||0;
+  drawCandles();
+  drawVolume();
+  updatePriceTag(p);
+});
 
 loadRates();
-setInterval(loadRates, 60000);
+setInterval(function(){
+  var p = rates[currentSym]||FALLBACK[currentSym]||0;
+  var last = candleData[candleData.length-1];
+  if(last){
+    var move = (Math.random()-0.48)*p*0.0008;
+    last.c = last.c+move;
+    last.h = Math.max(last.h,last.c);
+    last.l = Math.min(last.l,last.c);
+    drawCandles();
+    updatePriceTag(last.c);
+    document.getElementById('sell-btn').textContent = fmtP(last.c*0.997,currentSym)+' SELL';
+    document.getElementById('buy-btn').textContent = 'BUY '+fmtP(last.c*1.003,currentSym);
+    document.getElementById('dp-price').textContent = fmtP(last.c,currentSym);
+    document.getElementById('bdc-live').textContent = fmtP(last.c,currentSym);
+    document.getElementById('ch-c').textContent = fmtP(last.c,currentSym);
+  }
+}, 2000);
 </script>
 </body>
 </html>

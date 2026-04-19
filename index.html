@@ -222,6 +222,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuc
   <button class="ntab" id="nav-crypto" onclick="switchView('crypto',this)">Crypto</button>
   <button class="ntab" onclick="openM('m-markets')">Markets Overview</button>
   <button class="ntab" style="background:#c8a84b;color:#000;font-weight:700" onclick="openM('m-icwealth')">IC Wealth Live</button>
+  <button class="ntab" style="background:#26a69a;color:#fff;font-weight:700" onclick="openM('m-livedata')">Live Prices</button>
   <button class="ntab" onclick="openM('m-news')">News</button>
   <button class="ntab" onclick="openM('m-econ')">Economic Calendar</button>
   <button class="ntab" onclick="openM('m-trade')">BDC Calc</button>
@@ -555,6 +556,148 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuc
           GhanaFX is not affiliated with IC Wealth. This link is provided as a resource for users who want access to live GSE data and real stock trading.
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="ov" id="m-livedata" onclick="ovClose(event,'m-livedata')">
+  <div class="modal" style="width:640px">
+    <div class="mhead" style="background:#0d1f0d;border-bottom:1px solid #26a69a">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:#26a69a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px">$</div>
+        <div>
+          <div class="mtit" style="color:#26a69a">Live Market Prices</div>
+          <div style="font-size:10px;color:var(--text2)">Click any button to view real-time prices from verified sources</div>
+        </div>
+      </div>
+      <button class="mclose" onclick="closeM('m-livedata')">x</button>
+    </div>
+    <div class="mbody" style="padding:0;background:#0a0a0a">
+
+      <!-- GSE STOCKS -->
+      <div style="padding:16px;border-bottom:1px solid #1a1a1a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="background:#2962ff;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px">GSE</span>
+          <span style="color:#fff;font-size:13px;font-weight:700">Ghana Stock Exchange - Live Prices</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="window.open('https://gsemarketwatch.com','_blank')" style="background:#111;border:1px solid #26a69a;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#26a69a;font-size:12px;margin-bottom:4px">GSE Market Watch</div>
+            <div style="font-size:10px;color:#888">Live minute-by-minute GSE trading data. All stocks, volumes, prices.</div>
+            <div style="font-size:10px;color:#26a69a;margin-top:4px">gsemarketwatch.com</div>
+          </button>
+          <button onclick="window.open('https://afx.kwayisi.org/gse/','_blank')" style="background:#111;border:1px solid #2962ff;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#2962ff;font-size:12px;margin-bottom:4px">GSE Live (kwayisi)</div>
+            <div style="font-size:10px;color:#888">Daily GSE trading summaries, gainers, losers and index data.</div>
+            <div style="font-size:10px;color:#2962ff;margin-top:4px">afx.kwayisi.org/gse</div>
+          </button>
+          <button onclick="window.open('https://gse.com.gh/trading-and-data/','_blank')" style="background:#111;border:1px solid #555;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#fff;font-size:12px;margin-bottom:4px">Official GSE Website</div>
+            <div style="font-size:10px;color:#888">Official Ghana Stock Exchange trading data and reports.</div>
+            <div style="font-size:10px;color:#888;margin-top:4px">gse.com.gh</div>
+          </button>
+          <button onclick="window.open('https://gsescreener.com/','_blank')" style="background:#111;border:1px solid #9c27b0;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#9c27b0;font-size:12px;margin-bottom:4px">GSE Screener</div>
+            <div style="font-size:10px;color:#888">Screen and filter all GSE stocks by sector, performance and market cap.</div>
+            <div style="font-size:10px;color:#9c27b0;margin-top:4px">gsescreener.com</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- FOREX -->
+      <div style="padding:16px;border-bottom:1px solid #1a1a1a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="background:#e65100;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px">FOREX</span>
+          <span style="color:#fff;font-size:13px;font-weight:700">Foreign Exchange - Live Rates</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="window.open('https://www.ghanarates.com','_blank')" style="background:#111;border:1px solid #e65100;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#e65100;font-size:12px;margin-bottom:4px">GhanaRates.com</div>
+            <div style="font-size:10px;color:#888">Live GHS exchange rates for USD, GBP, EUR, XOF and all currencies.</div>
+            <div style="font-size:10px;color:#e65100;margin-top:4px">ghanarates.com</div>
+          </button>
+          <button onclick="window.open('https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=GHS','_blank')" style="background:#111;border:1px solid #2962ff;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#2962ff;font-size:12px;margin-bottom:4px">XE Currency Converter</div>
+            <div style="font-size:10px;color:#888">World's most trusted forex converter. USD/GHS, EUR/GHS, GBP/GHS and more.</div>
+            <div style="font-size:10px;color:#2962ff;margin-top:4px">xe.com</div>
+          </button>
+          <button onclick="window.open('https://www.bog.gov.gh/treasury-and-the-markets/financial-markets/forex-rates/','_blank')" style="background:#111;border:1px solid #26a69a;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#26a69a;font-size:12px;margin-bottom:4px">Bank of Ghana Rates</div>
+            <div style="font-size:10px;color:#888">Official BoG interbank forex rates. The most authoritative source in Ghana.</div>
+            <div style="font-size:10px;color:#26a69a;margin-top:4px">bog.gov.gh</div>
+          </button>
+          <button onclick="window.open('https://www.xe.com/currencyconverter/convert/?Amount=1&From=XOF&To=GHS','_blank')" style="background:#111;border:1px solid #1D9E75;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#1D9E75;font-size:12px;margin-bottom:4px">XOF/GHS - CFA Rate</div>
+            <div style="font-size:10px;color:#888">Live CFA Franc to Ghana Cedi conversion rate updated in real time.</div>
+            <div style="font-size:10px;color:#1D9E75;margin-top:4px">xe.com/XOF-to-GHS</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- CRYPTO -->
+      <div style="padding:16px;border-bottom:1px solid #1a1a1a">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="background:#f9a825;color:#000;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px">CRYPTO</span>
+          <span style="color:#fff;font-size:13px;font-weight:700">Cryptocurrency - Live Prices</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="window.open('https://www.coingecko.com','_blank')" style="background:#111;border:1px solid #f9a825;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#f9a825;font-size:12px;margin-bottom:4px">CoinGecko</div>
+            <div style="font-size:10px;color:#888">Live prices for 17,000+ cryptocurrencies. Free, trusted, no signup needed.</div>
+            <div style="font-size:10px;color:#f9a825;margin-top:4px">coingecko.com</div>
+          </button>
+          <button onclick="window.open('https://coinmarketcap.com','_blank')" style="background:#111;border:1px solid #2962ff;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#2962ff;font-size:12px;margin-bottom:4px">CoinMarketCap</div>
+            <div style="font-size:10px;color:#888">World's most referenced crypto market data platform. Live prices and charts.</div>
+            <div style="font-size:10px;color:#2962ff;margin-top:4px">coinmarketcap.com</div>
+          </button>
+          <button onclick="window.open('https://www.coingecko.com/en/coins/bitcoin','_blank')" style="background:#111;border:1px solid #f7931a;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#f7931a;font-size:12px;margin-bottom:4px">Bitcoin Live Price</div>
+            <div style="font-size:10px;color:#888">Real-time BTC price, chart, market cap and 24h volume on CoinGecko.</div>
+            <div style="font-size:10px;color:#f7931a;margin-top:4px">coingecko.com/bitcoin</div>
+          </button>
+          <button onclick="window.open('https://www.binance.com/en/markets/overview','_blank')" style="background:#111;border:1px solid #f9a825;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#f9a825;font-size:12px;margin-bottom:4px">Binance Markets</div>
+            <div style="font-size:10px;color:#888">Live crypto trading pairs and prices on the world's largest crypto exchange.</div>
+            <div style="font-size:10px;color:#f9a825;margin-top:4px">binance.com</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- GENERAL MARKETS -->
+      <div style="padding:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="background:#555;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px">GLOBAL</span>
+          <span style="color:#fff;font-size:13px;font-weight:700">Global Markets and Commodities</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="window.open('https://www.tradingview.com/markets/','_blank')" style="background:#111;border:1px solid #2962ff;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#2962ff;font-size:12px;margin-bottom:4px">TradingView Markets</div>
+            <div style="font-size:10px;color:#888">Professional charts for stocks, forex, crypto and commodities worldwide.</div>
+            <div style="font-size:10px;color:#2962ff;margin-top:4px">tradingview.com/markets</div>
+          </button>
+          <button onclick="window.open('https://finance.yahoo.com','_blank')" style="background:#111;border:1px solid #9c27b0;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#9c27b0;font-size:12px;margin-bottom:4px">Yahoo Finance</div>
+            <div style="font-size:10px;color:#888">Live stock prices, forex rates, financial news and portfolio tracker.</div>
+            <div style="font-size:10px;color:#9c27b0;margin-top:4px">finance.yahoo.com</div>
+          </button>
+          <button onclick="window.open('https://www.investing.com','_blank')" style="background:#111;border:1px solid #e65100;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#e65100;font-size:12px;margin-bottom:4px">Investing.com</div>
+            <div style="font-size:10px;color:#888">Live forex, stocks, commodities including gold, cocoa and crude oil.</div>
+            <div style="font-size:10px;color:#e65100;margin-top:4px">investing.com</div>
+          </button>
+          <button onclick="window.open('https://www.african-markets.com/en/stock-markets/gse/listed-companies','_blank')" style="background:#111;border:1px solid #26a69a;color:#fff;padding:12px;border-radius:5px;cursor:pointer;text-align:left">
+            <div style="font-weight:700;color:#26a69a;font-size:12px;margin-bottom:4px">African Markets - GSE</div>
+            <div style="font-size:10px;color:#888">All GSE listed companies with prices, market cap and performance data.</div>
+            <div style="font-size:10px;color:#26a69a;margin-top:4px">african-markets.com/gse</div>
+          </button>
+        </div>
+        <div style="margin-top:14px;font-size:10px;color:#555;text-align:center;line-height:1.7">
+          GhanaFX links to verified external sources for live data. All prices on this dashboard are simulated for demonstration purposes only.
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

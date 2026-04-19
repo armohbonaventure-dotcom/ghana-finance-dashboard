@@ -208,11 +208,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuc
   </div>
 </div>
 
+<div id="simbanner" style="background:#7b3f00;border-bottom:1px solid #a0522d;padding:5px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="background:#ff9800;color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap">SIMULATION</span>
+    <span style="font-size:11px;color:#ffcc80">Charts and GSE stock prices are for demonstration only and do not reflect real market data. Live data: XOF, USD, GBP and all forex rates.</span>
+  </div>
+  <button onclick="document.getElementById('simbanner').style.display='none'" style="background:none;border:none;color:#ffcc80;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0;padding:0 4px">x</button>
+</div>
+
 <div class="navtabs">
   <button class="ntab on" id="nav-forex" onclick="switchView('forex',this)">Forex</button>
   <button class="ntab" id="nav-gse" onclick="switchView('gse',this)">GSE Stocks</button>
   <button class="ntab" id="nav-crypto" onclick="switchView('crypto',this)">Crypto</button>
   <button class="ntab" onclick="openM('m-markets')">Markets Overview</button>
+  <button class="ntab" style="background:#c8a84b;color:#000;font-weight:700" onclick="openM('m-icwealth')">IC Wealth Live</button>
   <button class="ntab" onclick="openM('m-news')">News</button>
   <button class="ntab" onclick="openM('m-econ')">Economic Calendar</button>
   <button class="ntab" onclick="openM('m-trade')">BDC Calc</button>
@@ -494,6 +503,60 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Trebuc
     <label class="ml">Color</label><input class="mi" type="color" value="#ffffff"/>
     <button class="mb" onclick="addNote()">Add to Chart</button>
   </div></div>
+</div>
+
+
+<div class="ov" id="m-icwealth" onclick="ovClose(event,'m-icwealth')">
+  <div class="modal" style="width:520px">
+    <div class="mhead" style="background:#1a1a2e;border-bottom:1px solid #c8a84b">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:#c8a84b;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:14px">IC</div>
+        <div>
+          <div class="mtit" style="color:#c8a84b">IC Wealth - Live GSE Trading</div>
+          <div style="font-size:10px;color:var(--text2)">Licensed broker on the Ghana Stock Exchange</div>
+        </div>
+      </div>
+      <button class="mclose" onclick="closeM('m-icwealth')">x</button>
+    </div>
+    <div class="mbody" style="padding:0">
+      <div style="background:#0d0d1a;padding:20px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+          <div style="background:#1a1a2e;border:1px solid #c8a84b22;border-radius:6px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Live GSE Prices</div>
+            <div style="font-size:20px">&#128200;</div>
+            <div style="font-size:11px;color:#c8a84b;margin-top:4px">Real-time</div>
+          </div>
+          <div style="background:#1a1a2e;border:1px solid #c8a84b22;border-radius:6px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Buy &amp; Sell Stocks</div>
+            <div style="font-size:20px">&#128181;</div>
+            <div style="font-size:11px;color:#c8a84b;margin-top:4px">Online trading</div>
+          </div>
+          <div style="background:#1a1a2e;border:1px solid #c8a84b22;border-radius:6px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:var(--text2);margin-bottom:4px">Portfolio Tracker</div>
+            <div style="font-size:20px">&#128203;</div>
+            <div style="font-size:11px;color:#c8a84b;margin-top:4px">Your holdings</div>
+          </div>
+        </div>
+        <div style="background:#1a1a2e;border-radius:6px;padding:14px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.7">
+          IC Wealth is a licensed dealing member of the Ghana Stock Exchange. Their platform gives you access to real-time GSE stock prices, live order books, and the ability to buy and sell shares directly from your phone or computer.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button onclick="window.open('https://www.icwealthmanagement.com','_blank')" style="width:100%;background:#c8a84b;color:#000;border:none;padding:13px;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer">
+            Open IC Wealth Platform
+          </button>
+          <button onclick="window.open('https://www.icwealthmanagement.com','_blank')" style="width:100%;background:none;border:1px solid #c8a84b;color:#c8a84b;padding:10px;border-radius:5px;font-size:12px;cursor:pointer">
+            Create a New Account
+          </button>
+          <button onclick="window.open('https://play.google.com/store/search?q=ic+wealth','_blank')" style="width:100%;background:none;border:1px solid var(--border);color:var(--text2);padding:10px;border-radius:5px;font-size:12px;cursor:pointer">
+            Download Mobile App (Android)
+          </button>
+        </div>
+        <div style="margin-top:12px;font-size:10px;color:var(--text2);text-align:center;line-height:1.6">
+          GhanaFX is not affiliated with IC Wealth. This link is provided as a resource for users who want access to live GSE data and real stock trading.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toastEl"></div>
@@ -1002,6 +1065,15 @@ function drawChart(isS){
   ctx.fillStyle=colUp;ctx.fillRect(cW,lineY-9,pad,18);
   ctx.fillStyle='#fff';ctx.font='bold 10px Trebuchet MS';ctx.textAlign='left';
   ctx.fillText(fp(lastC,isS),cW+3,lineY+4);
+
+  // Simulation watermark
+  ctx.save();
+  ctx.globalAlpha=0.07;
+  ctx.fillStyle='#ffffff';
+  ctx.font='bold 28px Trebuchet MS,Arial';
+  ctx.textAlign='center';
+  ctx.fillText('SIMULATED DATA',W/2,H/2);
+  ctx.restore();
 
   // Crosshair
   if(crosspos){
